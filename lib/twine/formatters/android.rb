@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'cgi'
 require 'rexml/document'
+require 'Nokogiri'
 
 module Twine
   module Formatters
@@ -76,6 +77,27 @@ module Twine
         super(section, key, lang, value)
       end
 
+      def cdata_start
+        "<![CDATA["
+      end
+
+      def cdata_end
+        "]]>"
+      end
+
+      # This is true if the child's text contains: <a href="/item"></a> OR <![CDATA[]]>
+      def does_text_have_html_styling?(child)
+        xml_content =  Nokogiri::XML(child).first_element_child
+
+        # If the content of the xml element has an element within it, let's
+        # give it double quotes and keep the string verbatim
+        !xml_content.first_element_child.nil? || html_styling_with_cdata?(child)
+      end
+
+      def html_styling_with_cdata?(child)
+        child.include?(cdata_start)
+      end
+
       def read(io, lang)
         document = REXML::Document.new io, :compress_whitespace => %w{ string }
 
@@ -105,7 +127,8 @@ module Twine
               child.each do |item|
                 if item.is_a? REXML::Element
                   plural_key = key + '__' + item.attributes['quantity']
-                  set_translation_for_key(section, plural_key, lang, item.text)
+
+                  handle_translation_for_key(section, plural_key, lang, item)
                 end
               end
             elsif child.name == 'string'
@@ -119,12 +142,37 @@ module Twine
 
               key = child.attributes['name']
 
-              set_translation_for_key(section, key, lang, child.text)
+              handle_translation_for_key(section, key, lang, child)
               set_comment_for_key(key, comment) if comment
 
               comment = nil
             end
           end
+        end
+      end
+
+      def handle_translation_for_key(section, key, lang, child)
+        child_string = child.to_s
+        translation_value = nil
+        if does_text_have_html_styling?(child_string)
+          translation_value = get_translation_for_html_styled_value(child_string)
+        else
+          translation_value = child.text
+        end
+
+        set_translation_for_key(section, key, lang, translation_value)
+      end
+
+      # Add double quotes `` to html-styled strings so they will be read/written verbatim
+      def get_translation_for_html_styled_value(child_string)
+        xml_content =  Nokogiri::XML(child_string).first_element_child
+
+        if html_styling_with_cdata?(child_string)
+          index_start = child_string.index(cdata_start)
+          index_end = child_string.index(cdata_end) + cdata_end.length - 1
+          return "`" + child_string[index_start..index_end] + "`"
+        else
+          return "`" + xml_content.inner_html.to_s + "`"
         end
       end
 
@@ -221,6 +269,13 @@ module Twine
       # however unescaped HTML markup like in "Welcome to <b>Android</b>!" is stripped when retrieved with getString() (http://stackoverflow.com/questions/9891996/)
       def format_value(value)
         value = value.dup
+
+        # If there are double quotes, we want to return the string verbatim
+        # Definition scrubs the double quotes to single in twine_file.rb line 178
+        if value.include? "`"
+          value = value[1..-2] if value[0] == '`' && value[-1] == '`'
+          return value
+        end
 
         # capture xliff tags and replace them with a placeholder
         xliff_tags = []

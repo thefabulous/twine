@@ -63,7 +63,7 @@ module Twine
 
     # Twine adds a copy of the dev language's translation if there is no definition provided for the language,
     # which is useful in the main Localizable.strings file because iOS doesn't auto use the Base language's
-    # value, but we don't want that behaviour in our plurals
+    # value, but we don't want that behaviour in our plurals OR our android files
     def translation_for_lang_or_nil(lang, dev_lang)
       translation = [lang].flatten.map { |l| @translations[l] }.first
 
