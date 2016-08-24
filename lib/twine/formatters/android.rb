@@ -200,19 +200,28 @@ module Twine
 
           # DEAL WITH PLURALS HERE
           if section.is_uncategorized
-            definitions.map! { |definition| format_definition(definition, lang) }
+            definitions.map! do |definition|
+              # Only output definitions that are in the correct language
+              if definition.translation_for_lang_or_nil(lang, @twine_file.language_codes[0])
+                format_definition(definition, lang)
+              end
+            end
             definitions.compact! # remove nil definitions
             definitions.map! { |definition| "\n#{definition}" }  # prepend newline
             result += definitions.join
           else
-            result +=  plurals_start_key_value_pattern % { key:section.name }
+            # If the plural section has no definitions in this language, skip it
+            # Otherwise, only output the correct definitions of the correct language
+            definitions.delete_if { |definition| definition.translation_for_lang_or_nil(lang, @twine_file.language_codes[0]).nil? }
 
-            definitions.map! { |definition| format_plural(definition, lang) }
-            definitions.compact! # remove nil definitions
-            definitions.map! { |definition| "\n#{definition}" }  # prepend newline
-            result += definitions.join
-
-            result += plurals_end_key_value_pattern
+            if !definitions.empty?
+              result +=  plurals_start_key_value_pattern % { key:section.name }
+              definitions.map! { |definition| format_plural(definition, lang) }
+              definitions.compact! # remove nil definitions
+              definitions.map! { |definition| "\n#{definition}" }  # prepend newline
+              result += definitions.join
+              result += plurals_end_key_value_pattern
+            end
           end
         end
       end
