@@ -156,6 +156,10 @@ module Twine
         end
       end
 
+      def should_include_definition(definition, lang)
+        return super(definition, lang) && !definition.translation_for_lang(lang).include?("`")
+      end
+
       def format_sections(twine_file, lang)
         first_plural = true
         out_file = File.open(plural_output_file_for_lang(lang), "w")
