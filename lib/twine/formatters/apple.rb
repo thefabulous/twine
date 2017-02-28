@@ -157,8 +157,8 @@ module Twine
       end
 
       def format_sections(twine_file, lang)
-        first_plural = true
         out_file = File.open(plural_output_file_for_lang(lang), "w")
+        out_file.puts(format_header_stringsdict)
 
         sections = Array.new(twine_file.sections.size)
         for i in 0 ... twine_file.sections.size
@@ -166,10 +166,6 @@ module Twine
           if section.is_uncategorized
             sections[i] = format_section(section, lang)
           else
-            if first_plural
-              first_plural = false
-              out_file.puts(format_header_stringsdict)
-            end
             format_section_plural(section, lang, out_file)
           end
         end
