@@ -30,13 +30,14 @@ module Twine
       end
 
       def can_handle_file?(path)
-        path_arr = path.split(File::SEPARATOR)
-        return path_arr[path_arr.length - 1] == default_file_name
+        return File.extname(path) == ".xml"
+        #path_arr = path.split(File::SEPARATOR)
+        #return path_arr[path_arr.length - 1] == default_file_name
       end
 
-      def default_file_name
-        return 'strings.xml'
-      end
+      #def default_file_name
+      #  return 'strings.xml'
+      #end
 
       def determine_language_given_path(path)
         path_arr = path.split(File::SEPARATOR)
