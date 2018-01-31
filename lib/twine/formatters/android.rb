@@ -182,7 +182,11 @@ module Twine
       end
 
       def format_sections(twine_file, lang)
-        result = '<resources>'
+        if @options[:output_path].include? "donottranslate"
+          result = '<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">'
+        else 
+          result = '<resources>'
+        end
 
         result += super + "\n"
 
@@ -203,7 +207,7 @@ module Twine
           if section.is_uncategorized
             definitions.map! do |definition|
               # Only output definitions that are in the correct language
-              if definition.translation_for_lang_or_nil(lang, @twine_file.language_codes[0])
+              if definition.translation_for_lang_or_nil(lang, @options[:developer_language] || @twine_file.language_codes[0])
                 format_definition(definition, lang)
               end
             end
