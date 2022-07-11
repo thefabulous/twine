@@ -217,7 +217,6 @@ module Twine
           else
             # If the plural section has no definitions in this language, skip it
             # Otherwise, only output the correct definitions of the correct language
-            definitions.delete_if { |definition| definition.translation_for_lang_or_nil(lang, @twine_file.language_codes[0]).nil? }
 
             if !definitions.empty?
               result +=  plurals_start_key_value_pattern % { key:section.name }
