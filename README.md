@@ -2,38 +2,13 @@
 
 Twine is a command line tool for managing your strings and their translations. These are all stored in a master text file and then Twine uses this file to import and export localization files in a variety of types, including iOS and Mac OS X `.strings` files, Android `.xml` files, gettext `.po` files, and [jquery-localize][jquerylocalize] `.json` files. This allows individuals and companies to easily share translations across multiple projects, as well as export localization files in any format the user wants.
 
-## Install
+## Install or update version (fabulous modded version)
 
-### As a Gem
-
-Twine is most easily installed as a Gem.
-
-```
-$ gem install twine
-```
-
-### From Source
-
-You can also run Twine directly from source. However, it requires [rubyzip][rubyzip] in order to create and read standard zip files.
-
-```
-$ gem install rubyzip
-$ git clone https://github.com/thefabulous/twine
-$ cd twine
-$ ./twine --help
-```
-
-Make sure you run the `twine` executable at the root of the project as it properly sets up your Ruby library path. The `bin/twine` executable does not.
-
-You can install the downloaded version in your Mac OSX with:
-
-```
-$ cd twine
-$ gem build twine.gemspec
-$ gem install twine
-```
-
-The last command will first try to install the gem built locally.
+1. Run `gem uninstall twine` and confirm uninstalling of the previous versions
+2. Go to the root of this repository and run `gem build twine.gemspec`
+3. This will build twine spec file. The last line of the output will consist of a file name, use it in the next step
+4. Run `gem install filename.gem`
+5. Confirm it was installed properly by running `twine --version` and making sure the version is correct
 
 ## Twine File Format
 
