@@ -7,7 +7,7 @@ Twine is a command line tool for managing your strings and their translations. T
 1. Run `gem uninstall twine` and confirm uninstalling of the previous versions
 2. Go to the root of this repository and run `gem build twine.gemspec`
 3. This will build twine spec file. The last line of the output will consist of a file name, use it in the next step
-4. Run `gem install filename.gem`
+4. Run `gem install twine-X.Y.Z.fab.gem`
 5. Confirm it was installed properly by running `twine --version` and making sure the version is correct
 
 ## Twine File Format
