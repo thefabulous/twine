@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'cgi'
 require 'rexml/document'
-require 'nokogiri'
+#require 'nokogiri'
 
 module Twine
   module Formatters
