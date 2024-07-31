@@ -1,4 +1,4 @@
-require 'Nokogiri'
+require 'nokogiri'
 
 module Twine
   module Formatters

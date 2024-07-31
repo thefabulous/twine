@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'cgi'
 require 'rexml/document'
-require 'Nokogiri'
+require 'nokogiri'
 
 module Twine
   module Formatters
@@ -184,7 +184,7 @@ module Twine
       def format_sections(twine_file, lang)
         if @options[:output_path].include? "donottranslate"
           result = '<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">'
-        else 
+        else
           result = '<resources>'
         end
 
