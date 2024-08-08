@@ -2,3 +2,4 @@
 .idea/
 *.lock
 .DS_Store
+vendor/
